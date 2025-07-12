@@ -1,35 +1,88 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./index.css";
+import React, { useEffect, useState } from "react";
+import { obtenerNoticias } from "./apiNoticias";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+function SeccionNoticias({ titulo, noticias }) {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
+    <section>
+      <h2>{titulo}</h2>
+      {noticias.length === 0 ? (
         <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
+          <em>
+            No se encontraron novedades significativas en el sector
+            telecomunicaciones para la fecha indicada.
+          </em>
         </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      ) : (
+        noticias.map((n, idx) => (
+          <article key={idx} style={{ marginBottom: "2em" }}>
+            <strong>
+              📅 {new Date(n.publishedAt).toLocaleDateString("es-PE", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              })}{" "}
+              – {n.title}
+            </strong>
+            <p>
+              <b>
+                {n.description
+                  ? n.description.split(".")[0] + "."
+                  : "Noticia relevante del sector de telecomunicaciones."}
+              </b>{" "}
+              {n.content ? n.content : ""}
+            </p>
+            <p>
+              Fuente:{" "}
+              <a href={n.url} target="_blank" rel="noopener noreferrer">
+                {n.source.name}
+              </a>
+            </p>
+          </article>
+        ))
+      )}
+    </section>
+  );
 }
 
-export default App
+function App() {
+  const [noticiasPeru, setNoticiasPeru] = useState([]);
+  const [noticiasLatam, setNoticiasLatam] = useState([]);
+  const [noticiasMundo, setNoticiasMundo] = useState([]);
+
+  useEffect(() => {
+    const hoy = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+    // Perú
+    obtenerNoticias("fibra OR internet OR telecomunicaciones Perú", hoy, hoy).then(setNoticiasPeru);
+    // América Latina (ejemplo: México, Colombia, Argentina)
+    obtenerNoticias("fibra OR internet OR telecomunicaciones México OR Colombia OR Argentina", hoy, hoy).then(setNoticiasLatam);
+    // Internacional (sin país específico)
+    obtenerNoticias("fibra OR internet OR telecomunicaciones", hoy, hoy).then(setNoticiasMundo);
+  }, []);
+
+  return (
+    <div
+      style={{
+        maxWidth: 800,
+        margin: "2em auto",
+        background: "rgba(255,255,255,0.07)",
+        borderRadius: "18px",
+        boxShadow: "0 8px 32px 0 #0a234255",
+        padding: "2em 1.5em",
+      }}
+    >
+      <h1>Resumen diario de noticias de telecomunicaciones</h1>
+      <SeccionNoticias titulo="Noticias en Perú" noticias={noticiasPeru} />
+      <SeccionNoticias
+        titulo="Noticias en América Latina"
+        noticias={noticiasLatam}
+      />
+      <SeccionNoticias
+        titulo="Noticias internacionales"
+        noticias={noticiasMundo}
+      />
+    </div>
+  );
+}
+
+export default App;
