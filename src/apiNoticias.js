@@ -1,11 +1,11 @@
 import axios from "axios";
 
-const API_KEY = "873dc99c494f42b89a59d102e3db1e04";
+const API_KEY = "cf79cb98bbebc78502570c775a02bfef";
 
-export async function obtenerNoticias(query, fromDate, toDate) {
-  const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(
+export async function obtenerNoticias(query, region = "es") {
+  const url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(
     query
-  )}&language=es&from=${fromDate}&to=${toDate}&sortBy=publishedAt&apiKey=${API_KEY}`;
+  )}&lang=es&country=${region}&max=10&token=${API_KEY}`;
   const { data } = await axios.get(url);
   return data.articles;
 }

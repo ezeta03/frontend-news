@@ -51,13 +51,12 @@ function App() {
   const [noticiasMundo, setNoticiasMundo] = useState([]);
 
   useEffect(() => {
-    const hoy = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
     // Perú
-    obtenerNoticias("fibra OR internet OR telecomunicaciones Perú", hoy, hoy).then(setNoticiasPeru);
-    // América Latina (ejemplo: México, Colombia, Argentina)
-    obtenerNoticias("fibra OR internet OR telecomunicaciones México OR Colombia OR Argentina", hoy, hoy).then(setNoticiasLatam);
-    // Internacional (sin país específico)
-    obtenerNoticias("fibra OR internet OR telecomunicaciones", hoy, hoy).then(setNoticiasMundo);
+    obtenerNoticias("fibra óptica OR internet OR telecomunicaciones", "pe").then(setNoticiasPeru);
+    // América Latina (ejemplo: México)
+    obtenerNoticias("fibra óptica OR internet OR telecomunicaciones", "mx").then(setNoticiasLatam);
+    // Internacional (idioma español, sin país)
+    obtenerNoticias("fibra óptica OR internet OR telecomunicaciones", "es").then(setNoticiasMundo);
   }, []);
 
   return (
